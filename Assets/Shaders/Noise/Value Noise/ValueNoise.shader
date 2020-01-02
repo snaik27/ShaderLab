@@ -3,7 +3,7 @@ Shader "Sid/ValueNoise"
 {
 	Properties
 	{
-	   _CellSize("Cell Size", Vector) = (1,1,1,0)
+	   _CellSize("Cell Size", Range(0,1)) = 1
 	}
 		SubShader
 	{
@@ -16,45 +16,97 @@ Shader "Sid/ValueNoise"
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
-
+		#include "NoiseFunctions.cginc"
 
 		struct Input
 		{
 			float3 worldPos;
 		};
 
-		float3 _CellSize;
+		float _CellSize;
 
-
-		float rand(float3 vec) {
-			float3 smallVal = sin(vec);
-			float random = dot(smallVal, float3(12.9898, 78.233, 37.719));
-			random = frac(sin(random) * 1343758.5453);
-			return random;
+		//Quadratic easeIn
+		inline float easeIn(float interpolator) {
+			return interpolator * interpolator;
 		}
 
-		//get a scalar random value from a 3d value
-		float rand3dTo1d(float3 value, float3 dotDir = float3(12.9898, 78.233, 37.719)) {
-			//make value smaller to avoid artefacts
-			float3 smallValue = sin(value);
-			//get scalar value from 3d vector
-			float random = dot(smallValue, dotDir);
-			//make value more random by making it bigger and then taking the factional part
-			random = frac(sin(random) * 1758.5453);
-			return random;
+		inline float easeOut(float interpolator) {
+			return 1 - (easeIn(1 - interpolator));
 		}
-		float3 rand3dTo3d(float3 value) {
-			return float3(
-				rand3dTo1d(value, float3(12.989, 78.233, 37.719)),
-				rand3dTo1d(value, float3(39.346, 11.135, 83.155)),
-				rand3dTo1d(value, float3(73.156, 52.235, 09.151))
-				);
+
+		float easeInOut(float interpolator) {
+			float easeInValue = easeIn(interpolator);
+			float easeOutValue = easeOut(interpolator);
+			return lerp(easeInValue, easeOutValue, interpolator);
 		}
+
+		float ValueNoise2d(float2 value) {
+			float upperLeftCell = rand2dTo1d(float2(floor(value.x), ceil(value.y)));
+			float upperRightCell = rand2dTo1d(float2(ceil(value.x), ceil(value.y)));
+			float lowerLeftCell = rand2dTo1d(float2(floor(value.x), floor(value.y)));
+			float lowerRightCell = rand2dTo1d(float2(ceil(value.x), floor(value.y)));
+
+			float interpolatorX = easeInOut(frac(value.x));
+			float interpolatorY = easeInOut(frac(value.y));
+
+			float upperCells = lerp(upperLeftCell, upperRightCell, interpolatorX);
+			float lowerCells = lerp(lowerLeftCell, lowerRightCell, interpolatorX);
+
+			float noise = lerp(lowerCells, upperCells, interpolatorY);
+			return noise;
+		}
+
+		float ValueNoise3d(float3 value) {
+			float interpolatorX = easeInOut(frac(value.x));
+			float interpolatorY = easeInOut(frac(value.y));
+			float interpolatorZ = easeInOut(frac(value.z));
+
+			float cellNoiseZ[2];
+			[unroll]
+			for (int z = 0; z <= 1; z++) {
+				float cellNoiseY[2];
+				[unroll]
+				for (int y = 0; y <= 1; y++) {
+					float cellNoiseX[2];
+					[unroll]
+					for (int x = 0; x <= 1; x++) {
+						float3 cell = floor(value) + float3(x, y, z);
+						cellNoiseX[x] = rand3dTo1d(cell);
+					}
+					cellNoiseY[y] = lerp(cellNoiseX[0], cellNoiseX[1], interpolatorX);
+				}
+				cellNoiseZ[z] = lerp(cellNoiseY[0], cellNoiseY[1], interpolatorY);
+			}
+			float noise = lerp(cellNoiseZ[0], cellNoiseZ[1], interpolatorZ);
+			return noise;
+		}
+
+
+
 		void surf(Input IN, inout SurfaceOutputStandard o)
 		{
-			float3 value = floor(IN.worldPos / _CellSize);
-			// Albedo comes from a texture tinted by color
-			o.Albedo = rand3dTo3d(value);
+			// Smooth interpolation in 1d:
+			/*float value = IN.worldPos.x / _CellSize;
+			float previousCellNoise = rand1dTo1d(floor(value));
+			float nextCellNoise = rand1dTo1d(ceil(value));
+			float interpolator = frac(value);
+			interpolator = easeInOut(interpolator);
+			float noise = lerp(previousCellNoise, nextCellNoise, interpolator);
+			float dist = abs(noise - IN.worldPos.y);
+			float pixelHeight = fwidth(IN.worldPos.y);
+			float lineIntensity = smoothstep(0, pixelHeight, dist);
+			o.Albedo = lineIntensity;*/
+
+			// Smooth lerp in 2d
+			/*float2 value = IN.worldPos.xy / _CellSize;
+			float noise = ValueNoise2d(value);
+
+			o.Albedo = noise;*/
+
+			// Smooth lerp in 3d
+			float3 value = IN.worldPos.xyz / _CellSize;
+			float noise = ValueNoise3d(value);
+			o.Albedo = noise;
 		}
 		ENDCG
 	}
