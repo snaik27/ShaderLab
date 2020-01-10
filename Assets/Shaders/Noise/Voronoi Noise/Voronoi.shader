@@ -25,9 +25,10 @@ Shader "Sid/Voronoi"
 			};
 
 			float3 voronoiNoise(float3 value) {
+				//divide into cells by flooring worldPos
 				float3 baseCell = floor(value);
 
-				//first pass to find the closest cell
+				//first pass to find the closest cell   
 				float minDistToCell = 10;
 				float3 toClosestCell;
 				float3 closestCell;

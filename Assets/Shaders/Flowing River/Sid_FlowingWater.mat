@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Sid_FlowingWater
+  m_Shader: {fileID: 4800000, guid: a199036ff9c34bd4a9d48d899e2a23bf, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _FoamNoise:
+        m_Texture: {fileID: 2800000, guid: 3ae0d16899d085842adc5367232dab69, type: 3}
+        m_Scale: {x: 0.5, y: 0.5}
+        m_Offset: {x: 0, y: 0}
+    - _Specs1:
+        m_Texture: {fileID: 2800000, guid: 824937acd7d3f1c40bfdf947f929bac7, type: 3}
+        m_Scale: {x: 1, y: 2}
+        m_Offset: {x: 0, y: 0}
+    - _Specs2:
+        m_Texture: {fileID: 2800000, guid: 3ae0d16899d085842adc5367232dab69, type: 3}
+        m_Scale: {x: 1, y: 0.2}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _FoamAmount: 0.633
+    m_Colors:
+    - _Color: {r: 0.31510323, g: 0.9150943, b: 0.8963446, a: 0.6862745}
+    - _FoamColor: {r: 0.670157, g: 85.445015, b: 0, a: 1}
+    - _FoamDirection: {r: 0, g: 1, b: 0, a: 0}
+    - _SpecColor1: {r: 1, g: 1, b: 1, a: 0.7764706}
+    - _SpecColor2: {r: 1, g: 1, b: 1, a: 0.9019608}
+    - _SpecDirection1: {r: 0, g: 0.2, b: 0, a: 0}
+    - _SpecDirection2: {r: 0, g: 0.05, b: 0, a: 0}

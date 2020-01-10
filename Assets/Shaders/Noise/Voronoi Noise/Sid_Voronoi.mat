@@ -20,8 +20,8 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _CellSize: 0.036
-    - _TimeScale: 1
+    - _CellSize: 0.215
+    - _TimeScale: 0
     m_Colors:
     - _BorderColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0.7264151, g: 0.33236918, b: 0.72344804, a: 0}
