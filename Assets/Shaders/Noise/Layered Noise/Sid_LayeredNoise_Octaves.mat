@@ -20,9 +20,9 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _CellSize: 0.1
-    - _Persistance: 0.485
-    - _Roughness: 3.3
-    - _ScrollSpeed: 1
+    - _CellSize: 8.3
+    - _Persistance: 0.8
+    - _Roughness: 14.2
+    - _ScrollSpeed: 0.9
     m_Colors:
     - _Color: {r: 0.27687788, g: 0.9089106, b: 0.9622642, a: 0}

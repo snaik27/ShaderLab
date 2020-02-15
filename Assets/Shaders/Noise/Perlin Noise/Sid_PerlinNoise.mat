@@ -21,6 +21,6 @@ Material:
     m_TexEnvs: []
     m_Floats:
     - _CellSize: 1
-    - _ScrollSpeed: 0.091
+    - _ScrollSpeed: 0.12
     m_Colors:
     - _Color: {r: 0.33748665, g: 0.84905356, b: 0.9056604, a: 0}
